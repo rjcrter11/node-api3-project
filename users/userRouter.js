@@ -4,27 +4,26 @@ const Users = require("./userDb");
 const Posts = require("../posts/postDb");
 
 const router = express.Router();
+router.use((res, req, next) => {
+  console.log("User Router");
+  next();
+});
+router;
 
-router.post("/", (req, res) => {
+router.post("/", validateUser, (req, res) => {
   const newUser = req.body;
 
-  if (!newUser.name) {
-    res
-      .status(400)
-      .json({ errorMessage: "Please provide a name for the user" });
-  } else {
-    Users.insert(newUser)
-      .then((user) => {
-        res.status(201).json(user);
-      })
-      .catch((error) => {
-        console.log(error);
-        res.status(500).json({ message: "Error adding user" });
-      });
-  }
+  Users.insert(newUser)
+    .then((user) => {
+      res.status(201).json(user);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: "Error adding user" });
+    });
 });
 
-router.post("/:id/posts", (req, res) => {
+router.post("/:id/posts", validateUserId, validatePost, (req, res) => {
   const postInfo = { ...req.body, user_id: req.params.id };
   Posts.insert(postInfo)
     .then((post) => {
@@ -112,15 +111,45 @@ router.put("/:id", (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
-  // do your magic!
+  const { id } = req.params;
+  Users.getById(id)
+    .then((user) => {
+      if (user) {
+        req.user = user;
+        console.log("UserId validated");
+        next();
+      } else {
+        res.status(400).json({ message: "Invalid user ID" });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: "Error processing request" });
+    });
 }
 
 function validateUser(req, res, next) {
-  // do your magic!
+  const User = req.body;
+  if (User && Object.keys(User).length > 0) {
+    console.log("User validated");
+    next();
+  } else if (!User.name) {
+    res.status(400).json({ message: "missing required field" });
+  } else {
+    res.status(400).json({ message: "missing user data" });
+  }
 }
 
 function validatePost(req, res, next) {
-  // do your magic!
+  const Post = req.body;
+  if (Post && Object.keys(Post).length > 0) {
+    console.log("Post validated");
+    next();
+  } else if (!Post.text) {
+    res.status(400).json({ message: "missing required field" });
+  } else {
+    res.status(400).json({ message: "missing post data" });
+  }
 }
 
 module.exports = router;
