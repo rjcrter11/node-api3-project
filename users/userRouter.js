@@ -48,7 +48,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/:id", validateUserId, (req, res) => {
   Users.getById(req.params.id)
     .then((user) => {
       if (user) {
@@ -63,7 +63,7 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.get("/:id/posts", (req, res) => {
+router.get("/:id/posts", validateUserId, (req, res) => {
   const id = req.params.id;
   Users.getUserPosts(id)
     .then((posts) => {
@@ -75,7 +75,7 @@ router.get("/:id/posts", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", validateUserId, (req, res) => {
   const id = req.params.id;
   Users.remove(id)
     .then((user) => {
@@ -91,7 +91,7 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validateUserId, (req, res) => {
   const id = req.params.id;
   const editUser = req.body;
   Users.update(id, editUser)
