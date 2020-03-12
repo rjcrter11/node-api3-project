@@ -129,26 +129,22 @@ function validateUserId(req, res, next) {
 }
 
 function validateUser(req, res, next) {
-  const User = req.body;
-  if (User && Object.keys(User).length > 0) {
-    console.log("User validated");
-    next();
-  } else if (!User.name) {
+  const user = req.body;
+  if (!user.name) {
     res.status(400).json({ message: "missing required field" });
   } else {
-    res.status(400).json({ message: "missing user data" });
+    console.log("User validated");
+    next();
   }
 }
 
 function validatePost(req, res, next) {
-  const Post = req.body;
-  if (Post && Object.keys(Post).length > 0) {
-    console.log("Post validated");
-    next();
-  } else if (!Post.text) {
+  const post = req.body;
+  if (!post.text) {
     res.status(400).json({ message: "missing required field" });
   } else {
-    res.status(400).json({ message: "missing post data" });
+    console.log("Post validated");
+    next();
   }
 }
 

@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const usersRouter = require("./users/userRouter");
 const postRouter = require("./posts/postRouter");
 
@@ -6,6 +7,7 @@ const server = express();
 
 server.use(logger);
 server.use(express.json());
+server.use(cors());
 
 server.use("/api/users", usersRouter);
 server.use("/api/posts", postRouter);
