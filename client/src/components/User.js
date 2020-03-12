@@ -10,6 +10,8 @@ const User = () => {
   const [userPosts, setUserPosts] = useState([]);
   const [userPage, setUserPage] = useState([]);
   const [addComment, setAddComment] = useState(initialComment);
+  const [editing, setEditing] = useState(false);
+  const [commentToEdit, setCommentToEdit] = useState(initialComment);
 
   const { id } = useParams();
 
@@ -35,7 +37,7 @@ const User = () => {
   useEffect(() => {
     fetchPosts();
     fetchUser();
-  }, []);
+  }, [commentToEdit]);
   const deletePost = (post) => {
     axios
       .delete(`http://localhost:5000/api/posts/${post.id}`)
@@ -49,7 +51,7 @@ const User = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .post(`http://localhost:5000/api/users/${id}/posts`, addComment)
+      .post(`http://localhost:5000/api/users/${userPosts.id}/posts`, addComment)
       .then((res) => {
         console.log(res);
         setAddComment(initialComment);
@@ -57,6 +59,24 @@ const User = () => {
       })
       .catch((err) => console.log(err));
   };
+
+  const editComment = (comment) => {
+    setEditing(true);
+    setCommentToEdit(comment);
+  };
+
+  const saveEdit = () => {
+    console.log("ediiiititit");
+    axios
+      .put(`http://localhost:5000/api/posts/${id}`, commentToEdit)
+      .then((res) => {
+        console.log(res);
+        fetchPosts();
+        setEditing(false);
+      })
+      .catch((err) => console.log(err));
+  };
+  console.log("log for userposts", userPosts);
 
   return (
     <div>
@@ -71,6 +91,7 @@ const User = () => {
                 {" "}
                 x
               </span>
+              <span onClick={() => editComment(post)}>Edit</span>
             </div>
           ))}
       </div>
@@ -88,6 +109,21 @@ const User = () => {
         />
         <button type="submit">Submit</button>
       </form>
+
+      {editing && (
+        <form onSubmit={saveEdit}>
+          <legend>Edit post</legend>
+          <label>
+            Comment
+            <input
+              type="text"
+              onChange={(e) => setCommentToEdit({ text: e.target.value })}
+              value={commentToEdit.text}
+            />
+          </label>
+          <button type="submit"> Submit</button>
+        </form>
+      )}
     </div>
   );
 };
