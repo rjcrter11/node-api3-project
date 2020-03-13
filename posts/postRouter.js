@@ -53,14 +53,11 @@ router.delete("/:id", (req, res) => {
 
 router.put("/:id", validatePostId, (req, res) => {
   const id = req.params.id;
-  const editPost = req.body;
-  Posts.update(id, editPost)
+  const edits = req.body;
+  const updatedPost = { ...edits, id };
+  Posts.update(id, edits)
     .then((post) => {
-      if (post) {
-        res.status(200).json(post);
-      } else {
-        res.status(404).json({ message: "The post could not be found" });
-      }
+      res.status(200).json(post);
     })
     .catch((error) => {
       console.log(error);

@@ -4,6 +4,7 @@ import axios from "axios";
 import "./App.css";
 import Users from "./components/Users";
 import User from "./components/User";
+import UserPost from "./components/UserPost";
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -27,7 +28,10 @@ function App() {
         <Users users={users} />
       </Route>
       <Route exact path="/users/:id/posts">
-        <User users={users} setUsers={setUsers} />
+        <User />
+      </Route>
+      <Route exact path="/posts/:id">
+        <UserPost />
       </Route>
     </div>
   );

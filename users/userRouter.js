@@ -49,10 +49,10 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", validateUserId, (req, res) => {
-  Users.getById(req.params.id)
+  Users.get()
     .then((user) => {
       if (user) {
-        res.status(200).json(user);
+        res.status(200).json(req.user);
       } else {
         res.status(404).json({ message: "User not found" });
       }
@@ -93,11 +93,12 @@ router.delete("/:id", validateUserId, (req, res) => {
 
 router.put("/:id", validateUserId, (req, res) => {
   const id = req.params.id;
-  const editUser = req.body;
-  Users.update(id, editUser)
-    .then((user) => {
-      if (user) {
-        res.status(200).json(user);
+  const changes = req.body;
+  const updatedUser = { ...changes, id };
+  Users.update(id, changes)
+    .then((edits) => {
+      if (edits) {
+        res.status(200).json(updatedUser);
       } else {
         res.status(404).json({ message: "The user could not be found" });
       }
